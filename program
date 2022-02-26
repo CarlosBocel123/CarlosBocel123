@@ -1,0 +1,204 @@
+#include<iostream>
+#include<conio.h>
+#include<Windows.h>
+#include<math.h>
+#include<time.h>
+#pragma warning(disable :4996)
+#define CRT_SECURE_NO_WARNING
+using namespace std;
+void gotoxy(int x, int y) {
+	COORD coord;
+	coord.X = (SHORT)x - 1;
+	coord.Y = (SHORT)y - 1;
+	SetConsoleCursorPosition(
+		GetStdHandle(STD_OUTPUT_HANDLE), coord);
+}
+
+void menu();
+
+void CrearFichero(FILE* Fichero);
+
+void InsertarDatos(FILE* Fichero);
+
+void VerDatos(FILE* Fichero);
+
+struct sRegistro {
+
+    char Nombre[25];
+
+    int Edad;
+
+    float Sueldo;
+
+} registro;
+
+int main()
+
+{
+    int opcion;
+
+    int exit = 0;
+
+    FILE* fichero = new FILE;
+
+    while (!exit)
+
+    {
+        menu();
+
+        gotoxy(15, 5);printf("\nOpcion: ");
+
+        scanf("%d", &opcion);
+
+        switch (opcion)
+
+        {
+        case 1:    CrearFichero(fichero);   break;
+
+        case 2:    InsertarDatos(fichero);   break;
+
+        case 3:     VerDatos(fichero);         break;
+
+        case 4:     exit = 1;             break;
+
+        default:    gotoxy(15, 2);printf("\nopcion no valida");
+
+        }
+
+    }
+
+    
+}
+
+void menu()
+
+{
+    system("cls");system("color f3");
+
+    gotoxy(20, 4);printf("\nMenu:");
+
+    gotoxy(20, 5);printf("\n\t :::..... 1. Crear fichero .....:::");
+
+    gotoxy(20, 6);printf("\n\t :::..... 2. Insertar datos .....:::");
+
+    gotoxy(20, 7);printf("\n\t :::..... 3. Ver datos .....:::");
+
+    gotoxy(20, 8);printf("\n\t :::..... 4. Salir .....:::");
+
+}
+
+void CrearFichero(FILE* Fichero)
+
+{
+    system("cls");system("color f3");
+    Fichero = fopen("fichero", "r");
+
+    if (!Fichero)
+
+    {
+        system("cls");system("color f3");
+        Fichero = fopen("fichero", "w");
+
+        gotoxy(15, 6);printf("\nArchivo creado!");
+
+    }
+
+    else
+
+    {
+        system("cls");system("color f3");
+
+        gotoxy(15, 6);printf("\nEl fichero ya existe!");
+
+    }
+
+    fclose(Fichero);
+
+    
+
+}
+
+void InsertarDatos(FILE* Fichero = new FILE)
+
+{
+    system("cls");system("color f3");
+    Fichero = fopen("fichero", "a+");
+
+    if (Fichero == NULL)
+
+    {
+        system("cls");system("color f3");
+
+        gotoxy(15, 6);printf("\nFichero no existe! \nPor favor creelo");
+
+        
+
+    }
+    system("cls");system("color f4");
+
+    gotoxy(35, 15);printf("\nDigita el nombre: ");
+
+    scanf("%s", &registro.Nombre);
+
+    gotoxy(35, 17);printf("\nDigita la edad: ");
+
+    scanf("%d", &registro.Edad);
+
+    gotoxy(35, 19);printf("\nDigita el sueldo: ");
+
+    scanf("%f", &registro.Sueldo);
+
+    fwrite(&registro, sizeof(struct sRegistro), 1, Fichero);
+
+    fclose(Fichero);
+
+    
+
+}
+
+
+
+void VerDatos(FILE* Fichero = new FILE)
+
+{
+    int numero = 1;
+
+    Fichero = fopen("fichero", "r");
+
+    if (Fichero == NULL)
+
+    {
+        system("cls");system("color f3");
+
+        gotoxy(35, 5);printf("\nFichero no existe! \nPor favor creelo");
+
+        
+
+    }
+    system("cls");system("color f3");
+
+    fread(&registro, sizeof(struct sRegistro), 1, Fichero);
+
+    gotoxy(45, 7);printf("\nNumero \tNombre \tEdad \tSueldo");
+
+    while (!feof(Fichero))
+
+    {
+        
+        gotoxy(45, 9);printf("\n%d \t%s \t%d \t%.2f", numero, registro.Nombre,
+
+            registro.Edad, registro.Sueldo);
+
+        fread(&registro, sizeof(struct sRegistro), 1, Fichero);
+
+        numero++;
+
+    }
+
+    _getch();
+
+    fclose(Fichero);
+
+    
+
+}
